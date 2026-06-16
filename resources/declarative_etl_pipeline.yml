@@ -1,0 +1,133 @@
+resources:
+  pipelines:
+    my_declarative_pipeline:
+      name: "etl_declarative_pipeline_${bundle.environment}"
+      catalog: poc
+      schema: bronze
+      # schema: my_schema
+      configuration:
+        source_table: "poc.bronze.taxi_zones"
+        bronze_table: "bundle_bronze_taxi_zone"
+        silver_table: "bundle_silver_taxi_zone"
+        gold_table: "bundle_gold_taxi_zone_mat_view"
+        filter_borough: "Queens"
+
+      libraries:
+        # References your explicit logic path
+        - file:
+            path: ../src/transformations/my_transformation.py 
+      serverless: true
+    
+    trips_pipeline:
+      name: trips_pipeline
+      catalog: poc
+      schema: bronze
+
+      configuration:
+        source_table: "poc.bronze.taxi_zones"
+        bronze_table: "bundle_bronze_taxi_zone"
+        silver_table: "bundle_silver_taxi_zone"
+        gold_table: "bundle_gold_taxi_zone_mat_view"
+        filter_borough: "Queens"
+
+
+      libraries:
+        - file:
+            path: ../src/transformations/my_transformation.py
+      
+      serverless: true
+    
+    source_2_pipeline:
+      name: source_2_pipeline
+      catalog: poc
+      schema: bronze
+
+      configuration:
+        source_table: "poc.bronze.taxi_zones"
+        bronze_table: "bundle_source_2_bronze_taxi_zone"
+        silver_table: "bundle_source_2_silver_taxi_zone"
+        gold_table: "bundle_source_2_gold_taxi_zone_mat_view"
+        filter_borough: "Queens"
+        autoloader_source: "newpath"
+
+
+      libraries:
+        - file:
+            path: ../src/transformations/my_transformation.py
+      
+      serverless: true
+
+    full_refresh_pipeline:
+      name: full_refresh_pipeline
+      catalog: poc
+      schema: bronze
+
+      configuration:
+        source_table: "poc.bronze.taxi_zones"
+        bronze_table: "full_refresh_bronze_taxi_zone"
+        silver_table: "full_refresh_silver_taxi_zone"
+        gold_table: "full_refresh_gold_taxi_zone_mat_view"
+        filter_borough: "Queens"
+        autoloader_source: "newpath"
+
+
+      libraries:
+        - file:
+            path: ../src/transformations/my_transformation.py
+      
+      serverless: true
+
+    clusters_pipeline:
+      name: clusters_pipeline
+      catalog: poc
+      schema: bronze
+
+      configuration:
+        source_table: "poc.bronze.taxi_zones"
+        bronze_table: "clusters_bronze_taxi_zone"
+        silver_table: "clusters_source_2_silver_taxi_zone"
+        gold_table: "clusters_source_2_gold_taxi_zone_mat_view"
+        filter_borough: "Queens"
+        autoloader_source: "newpath"
+
+      edition: "advanced"
+      libraries:
+        - file:
+            path: ../src/transformations/my_transformation.py
+      
+      # clusters:
+      #     - label: default
+      #       node_type_id: Standard_DS3_v2
+      #       driver_node_type_id: Standard_DS3_v2
+      #       num_workers: 2
+
+      serverless: true
+
+
+    trigger_type_pipeline:
+      name: trigger_type_pipeline
+      catalog: poc
+      schema: bronze
+      continuous: true
+
+
+      configuration:
+        source_table: "poc.bronze.taxi_zones"
+        bronze_table: "trigger_bronze_taxi_zone"
+        silver_table: "trigger_silver_taxi_zone"
+        gold_table: "trigger_gold_taxi_zone_mat_view"
+        filter_borough: "Queens"
+        autoloader_source: "newpath"
+        # pipelines.trigger.interval: "10 seconds"
+
+
+      libraries:
+        - file:
+            path: ../src/transformations/my_transformation.py
+      
+      serverless: true
+
+
+
+
+      
